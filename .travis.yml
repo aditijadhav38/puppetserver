@@ -13,23 +13,35 @@ jobs:
     - stage: puppetserver tests
       name: "Java 8"
       jdk: openjdk8
+      os: linux
+      arch:
+        - s390x
     - jdk: openjdk11
       name: "Java 11"
+      os: linux
+      arch:
+        - s390x
     - jdk: openjdk11
       env: ADDITIONAL_LEIN_ARGS="with-profile fips"
       name: "Java 11 w/ FIPS"
+      arch: s390x
     - jdk: openjdk11
       env: MULTITHREADED=true
       name: "Java 11 w/ multithreaded"
+      arch: s390x
     - stage: puppetserver vulnerability scan
+      arch: s390x
       script:
         - lein nvd check
     - stage: puppetserver container tests
+      os: linux
+      arch:
+        - s390x
       dist: focal
       language: ruby
       rvm: 2.6.5
       env:
-        - DOCKER_COMPOSE_VERSION=1.28.6
+        - DOCKER_COMPOSE_VERSION=2.0.0
         - DOCKER_BUILDX_VERSION=0.5.1
         # necessary to prevent overwhelming TravisCI build output limits
         - DOCKER_BUILD_FLAGS="--progress plain"
@@ -39,7 +51,7 @@ jobs:
         - chmod +x docker-compose
         - sudo mv docker-compose /usr/local/bin
         - mkdir -vp ~/.docker/cli-plugins
-        - curl --location https://github.com/docker/buildx/releases/download/v${DOCKER_BUILDX_VERSION}/buildx-v${DOCKER_BUILDX_VERSION}.linux-amd64 > ~/.docker/cli-plugins/docker-buildx
+        - curl --location https://github.com/docker/buildx/releases/download/v${DOCKER_BUILDX_VERSION}/buildx-v${DOCKER_BUILDX_VERSION}.linux-s390x > ~/.docker/cli-plugins/docker-buildx
         - chmod +x ~/.docker/cli-plugins/docker-buildx
         - docker buildx create --name travis_builder --use
       script:
